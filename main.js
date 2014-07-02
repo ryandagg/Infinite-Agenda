@@ -1,11 +1,8 @@
 /* To do:
--move cursor into newly created input fields
 
-
-
-Styling:
--add a header for each week and give month & year there. Take them out of each day
--but a border around selected input fields
+	-Styling:
+		-but a border around selected input fields
+		-add a bullet point in front of each saved event
 
 */
 
@@ -15,10 +12,14 @@ var currentDate = new Date();
 // counter to increase everytime getNewDate is called to increment the day by 1
 var dayCounter = 0;
 
+var createNewDate = function() {
+	return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + dayCounter);
+}
+
 // returns a string for each new date as it is increased and added to the body
-var getNewDate = function() {
+var formatedDate = function(arg) {
 	
-	var newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + dayCounter);
+	var newDate = createNewDate();
 	var dayChoice = {0: "Sunday", 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday"};
 	var monthChoice = {0: "January", 1: "Febuary", 2: "March", 3: "April", 4: "May", 5: "June", 6: "July", 7: "August", 8: "September", 9: "October", 10: "November", 11: "December"} ;
 
@@ -36,23 +37,36 @@ var getNewDate = function() {
 	else {
 		nthStr = "th";
 	}
-	
-	dayCounter++;
 
-	return dayChoice[newDate.getDay()] + ", " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr + " , " + newDate.getFullYear();
+	if(arg === "day") {
+		dayCounter++;
+		return dayChoice[newDate.getDay()] + " the " + newDate.getDate() + nthStr
+	}
+	else {
+		return "The week of " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr + ", " + newDate.getFullYear();
+	}
+	
+}
+
+var checkForSunday = function() {
+	if (createNewDate().getDay() === 0) {
+		return "<div class = 'week-header'>" + formatedDate('header') + "</div>";
+	}
+	else { 
+		return ''; 
+	}
 }
 
 // function to add an entire week to body. Calls 
 var addWeek = function(){
-	$(".day-block").off();
 	$(".main-wrapper").append(
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
-		"<div class = 'day-block editable'>" + getNewDate() + "</div>"
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() +
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() + 
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() + 
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() +
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() +
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() +
+		"<div class = 'day-block editable'>" + formatedDate('day') + "</div>" + checkForSunday() 
 		);		
 }
 
@@ -90,12 +104,13 @@ $(document).on('ready', function() {
 	// check for clicks on .day-block and checks if it has .editable class. This prevents adding multiple events before entering text on the first. Creates a new input field if there isn't an existing one. 
 	$(document).on('click', ".day-block", function() {
 		if($(this).hasClass("editable")) {
-			$(this).after("<input class = 'event-input'>");
+			$(this).after("<input class = 'event-input' placeholder = 'Enter event details'>");
 		}	
 		$(this).removeClass('editable');
 
 		// Register "enter key" press while in input field & replace with a div with selected text.
 		attachInputEvents();
+		$(this).next().focus();
 	})
 
 	// make events editable 
