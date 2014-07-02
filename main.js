@@ -1,7 +1,12 @@
-/* Ideas:
--Start with 2 weeks?
--on scroll down create the divs and scroll?
-	-or add when the bottom of the window is close to the bottom of the document!
+/* To do:
+-move cursor into newly created input fields
+
+
+
+Styling:
+-add a header for each week and give month & year there. Take them out of each day
+-but a border around selected input fields
+
 */
 
 // create a new date to use as a reference for future dates
@@ -33,10 +38,12 @@ var getNewDate = function() {
 	}
 	
 	dayCounter++;
+
 	return dayChoice[newDate.getDay()] + ", " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr + " , " + newDate.getFullYear();
 }
 
 var addWeek = function(){
+	$(".day-block").off();
 	$(".main-wrapper").append(
 		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
 		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
@@ -45,7 +52,7 @@ var addWeek = function(){
 		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
 		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
 		"<div class = 'day-block editable'>" + getNewDate() + "</div>"
-		);
+		);		
 }
 
 addWeek();
@@ -64,22 +71,32 @@ $(document).on('ready', function() {
 		}
 		
 	})
+
 // This currently only works on elements created by "ready"
-	$(".day-block").on('click', function() {
+	$(document).on('click', ".day-block", function() {
 		if($(this).hasClass("editable")) {
 			$(this).after("<input class = 'event-input'>");
 		}	
 		$(this).removeClass('editable');
-// THIS HOT MESS NEED TO BE WORKED ON NEXT
-// the "enter key" only works once.
+
+		// Register "enter key" press while in input field & replace with a div with selected text.
 		$(".event-input").bind("enterKey", function(e) {
-			$(this).prev().addClass("editable");
+			$(this).prev(".day-block").addClass("editable");
+			var eventText = $(this).val()
+			$(this).replaceWith("<div class = 'editableEvent'>" + eventText + "</div>")
 		})
+
 		$(".event-input").keyup(function(e) {
 			if(e.keyCode == 13) {
         		$(this).trigger("enterKey");
     		}
 		});
-	})		
-	// })
+	})
+
+	// make events editable | NOT CURRENTLY WORKING
+		$(document).on('click', ".editableEvent", function(e) {
+			var eventText = $(this).text();
+			$(this).replaceWith("<input class = 'event-input' value= '" + eventText + "'>")
+		})
+		
 });
