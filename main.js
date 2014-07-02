@@ -3,8 +3,49 @@
 -on scroll down create the divs and scroll?
 	-or add when the bottom of the window is close to the bottom of the document!
 */
+
+// create a new date to use as a reference for future dates
+var currentDate = new Date();
+
+// counter to increase everytime getNewDate is called to increment the day by 1
+var dayCounter = 0;
+
+// returns a string for each new date as it is increased and added to the body
+var getNewDate = function() {
+	dayCounter++;
+	var newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + dayCounter);
+	var dayChoice = {0: "Sunday", 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday"};
+	var monthChoice = {0: "January", 1: "Febuary", 2: "March", 3: "April", 4: "May", 5: "June", 6: "July", 7: "August", 8: "September", 9: "October", 10: "November", 11: "December"} ;
+
+	var nthString;
+
+	if (newDate.getDate() % 10 === 1 && newDate.getDate() !== 11) {
+		nthStr = "st";
+	}
+	else if (newDate.getDate() % 10 === 2 && newDate.getDate() !== 12) {
+		nthStr = "nd";
+	}
+	else if (newDate.getDate() % 10 === 3 && newDate.getDate() !== 13) {
+		nthStr = "rd";
+	}
+	else {
+		nthStr = "th";
+	}
+	
+
+	return dayChoice[newDate.getDay()] + ", " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr;
+}
+
 var addWeek = function(){
-	$(".main-wrapper").append("<div class = 'day-block'>Figure it out</div><div class = 'day-block'>Figure it out</div><div class = 'day-block'>Figure it out</div><div class = 'day-block'>Figure it out</div><div class = 'day-block'>Figure it out</div><div class = 'day-block'>Figure it out</div><div class = 'day-block'>Figure it out</div>");
+	$(".main-wrapper").append(
+		"<div class = 'day-block'>" + getNewDate() + "</div>" + 
+		"<div class = 'day-block'>" + getNewDate() + "</div>" + 
+		"<div class = 'day-block'>" + getNewDate() + "</div>" + 
+		"<div class = 'day-block'>" + getNewDate() + "</div>" +
+		"<div class = 'day-block'>" + getNewDate() + "</div>" +
+		"<div class = 'day-block'>" + getNewDate() + "</div>" +
+		"<div class = 'day-block'>" + getNewDate() + "</div>"
+		);
 }
 
 $(document).on('ready', function() {
@@ -17,8 +58,6 @@ $(document).on('ready', function() {
 		// var appendTrigger = $(window).height() + $("body").scrollTop() - 200;
 
 		if($("body").height() - 200 < $(window).height() + $("body").scrollTop()) {
-			console.log("Seriously, WTF?")
-			$(".main-wrapper").append("<div></div>")
 			addWeek();
 		}
 		
