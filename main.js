@@ -42,6 +42,7 @@ var getNewDate = function() {
 	return dayChoice[newDate.getDay()] + ", " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr + " , " + newDate.getFullYear();
 }
 
+// function to add an entire week to body. Calls 
 var addWeek = function(){
 	$(".day-block").off();
 	$(".main-wrapper").append(
@@ -55,24 +56,38 @@ var addWeek = function(){
 		);		
 }
 
+// add input event listener for newly created input fields
+var attachInputEvents = function () {
+	$(".event-input").bind("enterKey", function(e) {
+		$(this).prev(".day-block").addClass("editable");
+		var eventText = $(this).val()
+		$(this).replaceWith("<div class = 'editableEvent'>" + eventText + "</div>")
+	})
+
+	$(".event-input").keyup(function(e) {
+		if(e.keyCode == 13) {
+    		$(this).trigger("enterKey");
+		}
+	});
+}
+
 addWeek();
 
 $(document).on('ready', function() {
+	// Check if initial week takes up entire window length & append a new week if not.
 	if($("body").height() < $(window).height()) {
 		addWeek();
 	}
 
 	$(document).on('scroll', function() {
-
-		// var appendTrigger = $(window).height() + $("body").scrollTop() - 200;
-
+		// check if the bottom of the window is within 200px of the body & append a week if it is.
 		if($("body").height() - 200 < $(window).height() + $("body").scrollTop()) {
 			addWeek();
 		}
 		
 	})
 
-// This currently only works on elements created by "ready"
+	// check for clicks on .day-block and checks if it has .editable class. This prevents adding multiple events before entering text on the first. Creates a new input field if there isn't an existing one. 
 	$(document).on('click', ".day-block", function() {
 		if($(this).hasClass("editable")) {
 			$(this).after("<input class = 'event-input'>");
@@ -80,23 +95,14 @@ $(document).on('ready', function() {
 		$(this).removeClass('editable');
 
 		// Register "enter key" press while in input field & replace with a div with selected text.
-		$(".event-input").bind("enterKey", function(e) {
-			$(this).prev(".day-block").addClass("editable");
-			var eventText = $(this).val()
-			$(this).replaceWith("<div class = 'editableEvent'>" + eventText + "</div>")
-		})
-
-		$(".event-input").keyup(function(e) {
-			if(e.keyCode == 13) {
-        		$(this).trigger("enterKey");
-    		}
-		});
+		attachInputEvents();
 	})
 
-	// make events editable | NOT CURRENTLY WORKING
-		$(document).on('click', ".editableEvent", function(e) {
-			var eventText = $(this).text();
-			$(this).replaceWith("<input class = 'event-input' value= '" + eventText + "'>")
-		})
-		
+	// make events editable 
+	$(document).on('click', ".editableEvent", function(e) {
+		var eventText = $(this).text();
+		$(this).replaceWith("<input class = 'event-input' value= '" + eventText + "'>")
+		attachInputEvents();
+	})
+	
 });
