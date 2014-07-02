@@ -12,7 +12,7 @@ var dayCounter = 0;
 
 // returns a string for each new date as it is increased and added to the body
 var getNewDate = function() {
-	dayCounter++;
+	
 	var newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + dayCounter);
 	var dayChoice = {0: "Sunday", 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday"};
 	var monthChoice = {0: "January", 1: "Febuary", 2: "March", 3: "April", 4: "May", 5: "June", 6: "July", 7: "August", 8: "September", 9: "October", 10: "November", 11: "December"} ;
@@ -32,21 +32,23 @@ var getNewDate = function() {
 		nthStr = "th";
 	}
 	
-
-	return dayChoice[newDate.getDay()] + ", " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr;
+	dayCounter++;
+	return dayChoice[newDate.getDay()] + ", " + monthChoice[newDate.getMonth()] + " the " + newDate.getDate() + nthStr + " , " + newDate.getFullYear();
 }
 
 var addWeek = function(){
 	$(".main-wrapper").append(
-		"<div class = 'day-block'>" + getNewDate() + "</div>" + 
-		"<div class = 'day-block'>" + getNewDate() + "</div>" + 
-		"<div class = 'day-block'>" + getNewDate() + "</div>" + 
-		"<div class = 'day-block'>" + getNewDate() + "</div>" +
-		"<div class = 'day-block'>" + getNewDate() + "</div>" +
-		"<div class = 'day-block'>" + getNewDate() + "</div>" +
-		"<div class = 'day-block'>" + getNewDate() + "</div>"
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>" + 
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>" +
+		"<div class = 'day-block editable'>" + getNewDate() + "</div>"
 		);
 }
+
+addWeek();
 
 $(document).on('ready', function() {
 	if($("body").height() < $(window).height()) {
@@ -62,4 +64,22 @@ $(document).on('ready', function() {
 		}
 		
 	})
+// This currently only works on elements created by "ready"
+	$(".day-block").on('click', function() {
+		if($(this).hasClass("editable")) {
+			$(this).after("<input class = 'event-input'>");
+		}	
+		$(this).removeClass('editable');
+// THIS HOT MESS NEED TO BE WORKED ON NEXT
+// the "enter key" only works once.
+		$(".event-input").bind("enterKey", function(e) {
+			$(this).prev().addClass("editable");
+		})
+		$(".event-input").keyup(function(e) {
+			if(e.keyCode == 13) {
+        		$(this).trigger("enterKey");
+    		}
+		});
+	})		
+	// })
 });
